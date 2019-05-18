@@ -49,7 +49,7 @@ class Receiver:
         
         a = bytearray(data.strip())
 
-        if self.current_state
+        if self.current_state:
             self.current_state = [a[i] for i in range(14)]
         
         for i in range(14):
