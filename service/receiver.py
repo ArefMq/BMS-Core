@@ -55,13 +55,18 @@ class Receiver:
         rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories')
         db_state = [row[3] for row in rows]
 
+        does_toggle_happened = False
         for i in range(14):
             if self.current_state[i] != a[i]:
                 self.toggle_key_on_db(i, db_state)
                 self.current_state[i] = a[i]
+                does_toggle_happened = True
 
             if DEBUG:
                 print(a[i])
+
+        if does_toggle_happened:
+            self.db_connection.commit()
 
         if DEBUG:
             print('________________________________')
@@ -69,7 +74,7 @@ class Receiver:
     
     def toggle_key_on_db(self, ith, db_state):
         print('toggeling %d' % ith)
-        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % ((1 - db_state[ith]), ith))
+        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % ((1 - db_state[ith]), ith + 1))
 
 
 if __name__ == "__main__":
