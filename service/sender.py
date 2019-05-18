@@ -89,7 +89,7 @@ class Sender:
         if DEBUG:
             print('sending: ', [r for r in self.b])
         res = self.socket.sendto(self.b , (self.HOST, self.PORT))
-        if res:
+        if res and DEBUG:
             print('send-to function fail: %d' % res)
 
 
