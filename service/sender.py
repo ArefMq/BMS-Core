@@ -11,7 +11,7 @@ DEBUG = True
 
 
 class Sender:
-    def __init__(self, host='', port=2223):
+    def __init__(self, host='192.168.1.1', port=2223):
         self.HOST = host # Symbolic name meaning all available interfaces
         self.PORT = port # Arbitrary non-privileged port
 
@@ -26,7 +26,7 @@ class Sender:
 
         # Bind socket to local host and port
         try:
-            self.socket.bind((self.HOST, self.PORT))
+            self.socket.bind(('', self.PORT))
             print('Socket bind complete')
         except socket.error , msg:
             print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
@@ -81,9 +81,9 @@ class Sender:
         
         if DEBUG:
             print('sending: ', [r for r in self.b])
-        res = self.db_cursor_connection.sendto(self.b , (self.HOST, self.PORT))
+        res = self.socket.sendto(self.b , (self.HOST, self.PORT))
         if res:
-            print('send-to fail: %d' % res)
+            print('send-to function fail: %d' % res)
 
 
 if __name__ == "__main__":
