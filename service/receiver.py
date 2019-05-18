@@ -6,7 +6,7 @@ import sqlite3
 
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
-DEBUG = True
+DEBUG = False
 
 
 class Receiver:
@@ -49,7 +49,7 @@ class Receiver:
         
         a = bytearray(data.strip())
 
-        if self.current_state:
+        if self.current_state is None:
             self.current_state = [a[i] for i in range(14)]
         
         for i in range(14):
