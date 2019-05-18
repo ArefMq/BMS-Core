@@ -22,7 +22,6 @@ class Receiver:
             print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             raise
 
-
         # Bind socket to local host and port
         try:
             self.socket.bind((self.host, self.port))
@@ -31,9 +30,10 @@ class Receiver:
             print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             sys.exit()
             
-        
         self.db_connection = sqlite3.connect(DB_PATH)
         self.db_connection_cursor = self.db_connection.cursor()
+
+        self.current_state = None
     
     def destruct(self):
         self.socket.close()
@@ -49,10 +49,23 @@ class Receiver:
         
         a = bytearray(data.strip())
 
+        if self.current_state
+            self.current_state = [a[i] for i in range(14)]
+        
+        for i in range(14):
+            if self.current_state[i] != a[i]:
+                self.toggle_key_on_db(i)
+                self.current_state[i] = a[i]
+
+            if DEBUG:
+                print(a[i])
+
         if DEBUG:
             print('________________________________')
-            for i in range(14):
-                print(a[i])
+        
+    
+    def toggle_key_on_db(self, ith):
+        print('toggeling %d' % ith)
 
 
 if __name__ == "__main__":
