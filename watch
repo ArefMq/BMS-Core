@@ -1,0 +1,28 @@
+#!/bin/bash
+res_django=`ps aux | grep "[/]usr/bin/python3 ./manage.py runserver 0.0.0.0:80" | wc -l`
+res_sender=`ps aux | grep "[s]ender" | wc -l`
+res_reciever=`ps aux | grep "[r]eciever" | wc -l`
+res_homebridge=`ps aux | grep "[h]omebridge" | wc -l`
+
+cmd_django="sudo nohup python3 /home/pi/bms/manage.py runserver 0.0.0.0:80"
+cmd_sender="sudo python /home/pi/service/sender.py"
+cmd_reciever="sudo python /home/pi/service/receive.py"
+cmd_homebridge="homebridge"
+
+if [ "$res_django" -eq "0" ]; then
+    echo "restart django";
+    $cmd_django &
+fi
+if [ "$res_homebridge" -eq "0" ]; then
+    echo "homebrifge restarted";
+    $cmd_homebridge &
+fi
+if [ "$res_sender" -eq "0" ]; then
+    echo "restart sender";
+    $cmd_sender &
+fi
+
+if [ "$res_reciever" -eq "0" ]; then
+    echo "restart reciever";
+    $cmd_reciever &
+fi
