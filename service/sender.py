@@ -1,83 +1,102 @@
-'''
-	Simple udp socket server
-'''
-
+#!/usr/bin/env python
 import socket
 import sys
 import array
 import sqlite3
 from time import sleep
 
-HOST = ''	# Symbolic name meaning all available interfaces
-PORT = 2223	# Arbitrary non-privileged port
 
-# Datagram (udp) socket
-try :
-	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	print 'Socket created'
-except socket.error, msg :
-	print 'Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-	sys.exit()
+DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
+DEBUG = True
 
 
-# Bind socket to local host and port
-try:
-	s.bind((HOST, PORT))
-except socket.error , msg:
-	print 'Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-	sys.exit()
-	
-print 'Socket bind complete'
-conn = sqlite3.connect('/home/pi/bms/db.sqlite3')
-c = conn.cursor()
+class Sender:
+    def __init__(self, host='', port=2223):
+        self.HOST = host # Symbolic name meaning all available interfaces
+        self.PORT = port # Arbitrary non-privileged port
 
-b = bytearray()
-b.append(1)
+        # Datagram (udp) socket
+        try :
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            print('Socket created')
+        except socket.error, msg:
+            print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+            raise
 
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
 
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
-b.append(0)
+        # Bind socket to local host and port
+        try:
+            self.socket.bind((self.HOST, self.PORT))
+            print('Socket bind complete')
+        except socket.error , msg:
+            print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+            raise
+    
 
-#now keep talking with the client
+        self.db_connection = sqlite3.connect(DB_PATH)
+        self.db_cursor_connection = self.db_connection.cursor()
+        print('Data base connected.')
 
-def main():
-	while 1:
-		for row in c.execute("SELECT id,channel,pos,status FROM backend_accessories"):
-			# print '  - ', row[3], row[1], row[2]
-			if row[3] == 1:
-				b[row[1]] = b[row[1]] | (1 << row[2])
-			else:
-				b[row[1]] = b[row[1]] & ~(1 << row[2])
-		# print "-----------------------------------------"
-		# receive data from client (data, addr)
-		# msg = raw_input('Enter message to send : ')
-		# q = int(msg)
-		# w = w ^ (1 << q)
-		# print w
-		
-                print 'sending: ', [r for r in b]
-		res = s.sendto(b , ('192.168.1.1',2223))
-                print res
-		sleep(0.1)
+
+        # FIXME: fix this:
+        self.b = bytearray()
+        # Mode		
+        self.b.append(1)
+
+        # Switches
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+
+        # HVAC
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+        self.b.append(0)
+
+    
+    def destruct(self):
+        self.socket.close()
+        self.db_connection.close()
+    
+    def send(self):
+        for row in self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories"):
+            # print '  - ', row[3], row[1], row[2]
+            if row[3] == 1:
+                self.b[row[1]] = self.b[row[1]] | (1 << row[2])
+            else:
+                self.b[row[1]] = self.b[row[1]] & ~(1 << row[2])
+        # print "-----------------------------------------"
+        # receive data from client (data, addr)
+        # msg = raw_input('Enter message to send : ')
+        # q = int(msg)
+        # w = w ^ (1 << q)
+        # print w
+        
+        if DEBUG:
+            print('sending: ', [r for r in self.b])
+        res = self.db_cursor_connection.sendto(self.b , (self.HOST, self.PORT))
+        if res:
+            print('send-to fail: %d' % res)
+
 
 if __name__ == "__main__":
-	try:
-		main()
-	except KeyboardInterrupt:
-		pass
-	finally:
-		s.close()
-		conn.close()
+    sender = Sender()
+    
+    try:
+        while 1:
+            sender.send()
+            sleep(0.1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        sender.destruct()
+        
 
 
