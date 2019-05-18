@@ -37,11 +37,11 @@ class Sender:
         self.db_cursor_connection = self.db_connection.cursor()
         print('Data base connected.')
 
-		self.current_state = None
+        self.current_state = None
 
         # FIXME: fix this:
         self.b = bytearray()
-        # Mode		
+        # Mode        
         self.b.append(1)
 
         # Switches
@@ -66,8 +66,8 @@ class Sender:
         self.socket.close()
         self.db_connection.close()
     
-	def update_from_db(self):
-		for row in self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories"):
+    def update_from_db(self):
+        for row in self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories"):
             # print '  - ', row[3], row[1], row[2]
             if row[3] == 1:
                 self.b[row[1]] = self.b[row[1]] | (1 << row[2])
@@ -75,16 +75,16 @@ class Sender:
                 self.b[row[1]] = self.b[row[1]] & ~(1 << row[2])
 
     def send(self):
-		self.update_from_db()
+        self.update_from_db()
 
-		if self.current_state is None:
+        if self.current_state is None:
             self.current_state = [self.b[i] for i in range(14)]
-		
-		for i in range(14):
+        
+        for i in range(14):
             if self.current_state[i] != self.b[i]:
                 print('change state of %d to %d' % (i, self.b[i]))
                 self.current_state[i] = self.b[i]
-			
+            
 
         if DEBUG:
             print('sending: ', [r for r in self.b])
