@@ -7,6 +7,6 @@ if __name__ == "__main__":
     try:
         res = g.pull()
         if res != 'Already up to date.':
-            print('can not pull...  :S\n%s' % res)
+            print('updated:   :D\n%s' % res)
     except GitCommandError as exp:
         print('pull exception. because: %s' % exp)
