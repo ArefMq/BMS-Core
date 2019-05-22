@@ -18,7 +18,7 @@ class Receiver:
         try :
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             print('Socket created')
-        except socket.error, msg :
+        except socket.error as msg :
             print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             raise
 
@@ -26,7 +26,7 @@ class Receiver:
         try:
             self.socket.bind((self.host, self.port))
             print('Socket bind complete.')
-        except socket.error , msg:
+        except socket.error as msg:
             print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             sys.exit()
             
