@@ -10,62 +10,66 @@ DEBUG = False
 
 
 class Receiver:
-    def __init__(self, port=2222):
-        self.host = ''    # Symbolic name meaning all available interfaces
+    def __init__(self, host='', port=2222):
+        self.host = host    # Symbolic name meaning all available interfaces
         self.port = port    # Arbitrary non-privileged port
+        self.current_state = None
 
         # Datagram (udp) socket
         try :
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             print('Socket created')
-        except socket.error as msg :
-            print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+
+        except socket.error as exp :
+            print('Failed to create socket. Because: %s', str(exp))
             raise
 
         # Bind socket to local host and port
         try:
             self.socket.bind((self.host, self.port))
             print('Socket bind complete.')
-        except socket.error as msg:
-            print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
-            sys.exit()
-            
-        self.db_connection = sqlite3.connect(DB_PATH)
-        self.db_connection_cursor = self.db_connection.cursor()
 
-        self.current_state = None
+        except socket.error as exp:
+            print('Failed to bind the socket. Because: %s', str(exp))
+            raise
+            
+        try:
+            self.db_connection = sqlite3.connect(DB_PATH)
+            self.db_connection_cursor = self.db_connection.cursor()
+        except Exception as exp:
+            print('Failed to connect to the database. Because: %s', str(exp))
+            raise
+
     
     def destruct(self):
         self.socket.close()
         self.db_connection.close()
 
-    def recieve(self):
-        d = self.socket.recvfrom(1024)
-        data = d[0]
-        addr = d[1]
+    def cycle(self):
+        data, addr = self.socket.recvfrom(1024)
 
         if not data: 
             raise Exception('invalid data recieved.')
         
-        a = bytearray(data.strip())
+        data = bytearray(data.strip())
 
         if self.current_state is None:
-            self.current_state = [a[i] for i in range(14)]
+            self.current_state = [data[i] for i in range(14)]
         
         rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories')
         db_state = [row[3] for row in rows]
 
-        does_toggle_happened = False
+        state_changed = False
         for i in range(14):
-            if self.current_state[i] != a[i]:
+            if self.current_state[i] != data[i]:
                 self.toggle_key_on_db(i, db_state)
-                self.current_state[i] = a[i]
-                does_toggle_happened = True
+                self.current_state[i] = data[i]
+                state_changed = True
 
             if DEBUG:
-                print(a[i])
+                print(data[i])
 
-        if does_toggle_happened:
+        if state_changed:
             self.db_connection.commit()
 
         if DEBUG:
@@ -79,11 +83,12 @@ class Receiver:
 
 if __name__ == "__main__":
     receiver = Receiver()
-    
+
+    # noinspection PyBroadException
     try:
         while 1:
-            receiver.recieve()
-    except KeyboardInterrupt:
+            receiver.cycle()
+    except Exception:
         pass
     finally:
         receiver.destruct()
