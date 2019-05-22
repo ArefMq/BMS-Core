@@ -4,6 +4,8 @@ import sys
 import array
 import sqlite3
 
+from board_model import BoardModel
+
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
 DEBUG = False
@@ -13,13 +15,12 @@ class Receiver:
     def __init__(self, host='', port=2222):
         self.host = host    # Symbolic name meaning all available interfaces
         self.port = port    # Arbitrary non-privileged port
-        self.current_state = None
+        self.board_model = BoardModel()
 
         # Datagram (udp) socket
         try :
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             print('Socket created')
-
         except socket.error as exp :
             print('Failed to create socket. Because: %s', str(exp))
             raise
@@ -28,7 +29,6 @@ class Receiver:
         try:
             self.socket.bind((self.host, self.port))
             print('Socket bind complete.')
-
         except socket.error as exp:
             print('Failed to bind the socket. Because: %s', str(exp))
             raise
@@ -36,6 +36,7 @@ class Receiver:
         try:
             self.db_connection = sqlite3.connect(DB_PATH)
             self.db_connection_cursor = self.db_connection.cursor()
+            print('Data base connected.')
         except Exception as exp:
             print('Failed to connect to the database. Because: %s', str(exp))
             raise
@@ -52,24 +53,19 @@ class Receiver:
             raise Exception('invalid data recieved.')
         
         data = bytearray(data.strip())
+        self.board_model.load_from_byte_array(data)
 
-        if self.current_state is None:
-            self.current_state = [data[i] for i in range(14)]
-        
         rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories')
         db_state = [row[3] for row in rows]
 
-        state_changed = False
-        for i in range(14):
-            if self.current_state[i] != data[i]:
-                self.toggle_key_on_db(i, db_state)
-                self.current_state[i] = data[i]
-                state_changed = True
+        changed_keys = self.board_model.get_changed_keys()
+        for key, _ in changed_keys:
+            self.toggle_key_on_db(key, db_state[key])
 
             if DEBUG:
                 print(data[i])
 
-        if state_changed:
+        if changed_keys:
             self.db_connection.commit()
 
         if DEBUG:
