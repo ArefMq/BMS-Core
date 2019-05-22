@@ -1,0 +1,3 @@
+# add django and django rest framework here
+# add sqlite here
+# add git
