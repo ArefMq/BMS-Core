@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 from git import Repo, GitCommandError
 
-g = Repo('.').git
-
-
 def kill_all_process():
     for line in out.splitlines():
     line = str(line)
@@ -12,11 +9,12 @@ def kill_all_process():
         os.kill(pid, signal.SIGKILL)
 
 
-
 if __name__ == "__main__":
     try:
+        g = Repo('.').git
         res = g.pull()
         if res != 'Already up to date.':
             print('updated:   :D\n%s' % res)
+            kill_all_process()
     except GitCommandError as exp:
         print('pull exception. because: %s' % exp)
