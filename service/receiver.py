@@ -59,17 +59,10 @@ class Receiver:
         db_state = [row[3] for row in rows]
 
         changed_keys = self.board_model.get_changed_keys()
-        for key, _ in changed_keys:
-            self.toggle_key_on_db(key, db_state[key])
-
-            if DEBUG:
-                print(data[i])
-
         if changed_keys:
+            for key, _ in changed_keys:
+                self.toggle_key_on_db(key, db_state[key])
             self.db_connection.commit()
-
-        if DEBUG:
-            print('________________________________')
         
     
     def toggle_key_on_db(self, ith, db_state):
@@ -80,11 +73,16 @@ class Receiver:
 if __name__ == "__main__":
     receiver = Receiver()
 
+    if DEBUG:
+        excepted = KeyboardInterrupt
+    else:
+        excepted = Exception
+        
     # noinspection PyBroadException
     try:
         while 1:
             receiver.cycle()
-    except Exception:
+    except excepted:
         pass
     finally:
         receiver.destruct()

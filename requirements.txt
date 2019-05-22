@@ -1,3 +1,3 @@
-# add django and django rest framework here
-# add sqlite here
-# add git
+Django==2.2.1
+djangorestframework==3.9.4
+gitdb2==2.0.5

@@ -18,9 +18,9 @@ class BoardModel:
 
         self.keys = []
         for i in range(NUM_OF_KEY_DATA_BYET):
-            self.keys.extend([i for i in '{0:08b}'.format(d)])
+            self.keys.extend([i for i in '{0:08b}'.format(data[i])])
         for i in range(NUM_OF_HVAC_DATA_BYET):
-            self.hvacs = data[i+NUM_OF_KEY_DATA_BYET]
+            self.hvacs[i] = data[i+NUM_OF_KEY_DATA_BYET]
     
     def to_byte_array(self):
         b = bytearray()
