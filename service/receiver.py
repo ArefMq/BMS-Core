@@ -60,14 +60,16 @@ class Receiver:
 
         changed_keys = self.board_model.get_changed_keys()
         if changed_keys:
-            for key, _ in changed_keys:
-                self.toggle_key_on_db(key, db_state[key])
+            for key_id, _ in changed_keys:
+                if key_id >= len(db_state):
+                    break
+                self.set_key_on_db(key_id, 1 - db_state[key_id])
             self.db_connection.commit()
         
     
-    def toggle_key_on_db(self, ith, db_state):
-        print('toggeling %d' % ith)
-        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % ((1 - db_state[ith]), ith + 1))
+    def set_key_on_db(self, ith, value):
+        print('toggeling %d to %d' % (ith, value))
+        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % (value, ith + 1))
 
 
 if __name__ == "__main__":

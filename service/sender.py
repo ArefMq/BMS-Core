@@ -5,6 +5,7 @@ import array
 import sqlite3
 from time import sleep
 from board_model import BoardModel
+from socket_errors import error_list
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
 DEBUG = False
@@ -49,20 +50,24 @@ class Sender:
     
     def get_from_db(self):
         res = self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories")
-        byte_data = [row[3] for x in res]
+        byte_data = [x[3] for x in res]
         return byte_data
         
     def send(self):
         byte_data = self.get_from_db()
+        self.board_model.update_data(keys=byte_data)
 
-        for key, state in self.board_model.get_changed_keys():
-            print('change state of %d to %d' % (key, state))
+        changes = self.board_model.get_changed_keys()
+        if changes:
+            for key, state in changes:
+                print('change state of %d to %d' % (key, state))
 
         if DEBUG:
             print('sending: ', [r for r in self.board_model.to_byte_array()])
         res = self.socket.sendto(self.board_model.to_byte_array() , (self.HOST, self.PORT))
-        if res and DEBUG:
-            print('send-to function fail: %d' % res)
+        if res and res != 14 and DEBUG:
+            res_text = ('  (%s)' % error_list[res]) if res in error_list else ''
+            print('send-to function fail: %d%s' % (res, res_text))
 
 
 if __name__ == "__main__":

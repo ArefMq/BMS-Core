@@ -1,6 +1,6 @@
 # Data Config
 NUM_OF_MODE_DATA_BYET = 1
-NUM_OF_KEY_DATA_BYET = 6
+NUM_OF_KEY_DATA_BYET = 7
 NUM_OF_HVAC_DATA_BYET = 6
 
 
@@ -26,10 +26,14 @@ class BoardModel:
         b = bytearray()
         b.append(self.mode)
 
-        data_string = ''.join(self.keys)
+        data_string = ''.join([str(int(bool(k))) for k in self.keys])
         for i in range(NUM_OF_KEY_DATA_BYET):
-            b.append(bin(data_string[i*8:i*8+8]))
-        b = b.extend([h for h in self.hvacs])
+            try:
+                b.append(int(data_string[i*8:i*8+8], 2))
+            except ValueError:
+                b.append(0)
+        b.extend([h for h in self.hvacs])
+        return b
 
     def update_data(self, keys=None, hvacs=None):
         if keys:
@@ -41,6 +45,7 @@ class BoardModel:
             self.hvacs = hvacs
 
     def get_changed_keys(self):
-        result = [(i, self.keys[i]) for i in range(len(self.keys)) if self.keys[i] != self.previous_key_state[i]] if self.previous_key_state else None
+        if self.previous_key_state:
+            return [(i, self.keys[i]) for i in range(len(self.keys)) if self.keys[i] != self.previous_key_state[i]]
 
 

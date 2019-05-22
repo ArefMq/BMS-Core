@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f "./no_watch_dog" ]; then
+if [ -f "/home/pi/BMS-Core/no_watch_dog" ]; then
   exit
 fi
 
