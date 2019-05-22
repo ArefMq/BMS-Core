@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if [ -f "./no_watch_dog" ]; then
+  exit
+fi
+
 res_django=`ps aux | grep "[/]usr/bin/python3 ./manage.py runserver 0.0.0.0:80" | wc -l`
 res_sender=`ps aux | grep "[s]ender" | wc -l`
 res_reciever=`ps aux | grep "[r]eciever" | wc -l`
