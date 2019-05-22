@@ -78,7 +78,6 @@ if __name__ == "__main__":
     else:
         excepted = Exception
         
-    # noinspection PyBroadException
     try:
         while 1:
             receiver.cycle()
