@@ -1,2 +1,11 @@
-# add previous crons here
-# add update cron here
+# process watch
+*/2 * * * * /home/pi/BMS-Core/watch
+
+# weekly update
+0 0 * * 0 /home/pi/BMS-Core/updater.py
+
+# monthly
+0 2 1 */1 * /home/pi/BMS-Core/updater.py
+
+# nightly
+0 4 * * * /home/pi/BMS-Core/updater.py

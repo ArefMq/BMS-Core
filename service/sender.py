@@ -8,6 +8,7 @@ from board_model import BoardModel
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
 DEBUG = True
+SENDING_DELAY = 1.1
 
 
 class Sender:
@@ -70,11 +71,8 @@ if __name__ == "__main__":
     try:
         while 1:
             sender.send()
-            sleep(0.1)
+            sleep(SENDING_DELAY)
     except KeyboardInterrupt:
         pass
     finally:
         sender.destruct()
-        
-
-
