@@ -39,6 +39,9 @@ class Accessories(models.Model):
     house = models.ForeignKey(House, on_delete=models.CASCADE)
     iconName = models.TextField()
     AccType = models.IntegerField()
+    
+    isAnalog = models.BooleanField(default=False)
+    analogValue = models.IntegerField()
 
     class Meta:
         ordering = ('id',)

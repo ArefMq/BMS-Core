@@ -55,7 +55,7 @@ class Receiver:
         data = bytearray(data.strip())
         self.board_model.load_from_byte_array(data)
 
-        rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories')
+        rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories WHERE isAnalog=0')
         db_state = [row[3] for row in rows]
 
         changed_keys = self.board_model.get_changed_keys()

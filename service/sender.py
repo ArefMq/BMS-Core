@@ -49,7 +49,7 @@ class Sender:
         self.db_connection.close()
     
     def get_from_db(self):
-        res = self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories")
+        res = self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories WHERE isAnalog=0")
         byte_data = [x[3] for x in res]
         return byte_data
         
