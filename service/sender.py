@@ -48,14 +48,20 @@ class Sender:
         self.socket.close()
         self.db_connection.close()
     
-    def get_from_db(self):
-        res = self.db_connection.execute("SELECT id,channel,pos,status FROM backend_accessories WHERE isAnalog=0")
+    def get_keys_from_db(self):
+        res = self.db_connection.execute("SELECT id,status FROM backend_accessories WHERE isAnalog=0")
+        byte_data = [x[1] for x in res]
+        return byte_data
+        
+    def get_hvacs_from_db(self):
+        res = self.db_connection.execute("SELECT id,analogValue FROM backend_accessories WHERE isAnalog=1")
         byte_data = [x[3] for x in res]
         return byte_data
         
     def send(self):
-        byte_data = self.get_from_db()
-        self.board_model.update_data(keys=byte_data)
+        byte_data_keys = self.get_keys_from_db()
+        byte_data_hvacs = self.get_hvacs_from_db()
+        self.board_model.update_data(keys=byte_data, hvacs=byte_data_hvacs)
 
         changes = self.board_model.get_changed_keys()
         if changes:
