@@ -65,7 +65,6 @@ class Receiver:
                     break
                 self.set_key_on_db(key_id, 1 - db_state[key_id])
             self.db_connection.commit()
-        
     
     def set_key_on_db(self, ith, value):
         print('toggeling %d to %d' % (ith, value))
