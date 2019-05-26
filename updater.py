@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 from git import Repo, GitCommandError
+import subprocess, signal
 
 def kill_all_process():
+    p = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE)
+    out, err = p.communicate()
+
     for line in out.splitlines():
         line = str(line)
         if 'receiver.py' in line or 'manage.py' in line or 'sender.py' in line:
