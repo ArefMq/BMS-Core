@@ -125,13 +125,12 @@ def AllAccessoriesView(request):
 
 
 @api_view(['GET'])
-# @permission_classes([permissions.IsAuthenticated])
+# @permission_classes([permissions.IsAuthenticated]) This should be remain commentted
 def AccessoryView(request):
     # user = request.user
     if request.method == 'GET':
-        acc = Accessories.objects.get(id=request.query_params.get('id'))
-        serializer = AccessoriesSerializer(acc)
-        return Response(acc.status)
+        result = get_accessory_view_data(acc_id=request.query_params.get('id'))
+        return Response(result)
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
 
 
@@ -214,16 +213,18 @@ def EditGroupView(request):
 def CommandView(request):
     user = request.user
     if request.method == 'POST':
-        acc = Accessories.objects.get(id=request.POST.get('id'))
-        acc.status = request.POST.get('command')
-        acc.save()
-        return Response({'success': True, 'message': 'Done!!', 'data': ''})
+        request_data = request.POST
     elif request.method == 'GET':
-        acc = Accessories.objects.get(id=request.query_params.get('id'))
-        acc.status = request.query_params.get('command')
-        acc.save()
-        return Response({'success': True, 'message': 'Done!!', 'data': ''})
-    return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
+        request_data = request.query_params
+
+    params = {
+        'acc_id': request_data.get('id'),
+        'status': request_data.get('command', 0),
+        'is_analog': request_data.get('is_analog', False),
+        'analog_value': request_data.get('analog_value', 0),
+    }
+    set_command_view_data(**params)
+    return Response({'success': True, 'message': 'Done!!', 'data': ''})
 
 # endregion
 # region scene
