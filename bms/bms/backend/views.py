@@ -261,7 +261,17 @@ def TrigerView(request):
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
 # endregion
 
+url_patterns = []
+def set_url_patterns(urls):
+    for u in urls:
+        barename = u.replace('^', '').replace('$', '').replace('/', '')
+        url_patterns.append((barename, '192.168.31.56/%s/') % barename)
+
 @api_view(['GET'])
 #@permission_classes([permissions.IsAuthenticated])
 def HomePageView(request):
-    pass
+    result = '<!DOCTYPE><html><head></head><body>'
+    for name, u in url_patterns:
+        result += '<a href="%s">%s</a></br>
+    result += '</body></html>'
+    return HttpResponse(result)

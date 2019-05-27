@@ -5,8 +5,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^/', views.HomePageView)
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -31,3 +29,5 @@ urlpatterns = [
 
 if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+views.set_url_patterns([u.pattern.regex.pattern for u in urlpatterns])
