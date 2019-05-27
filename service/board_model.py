@@ -57,11 +57,11 @@ class BoardModel:
                 self.keys[id] = Key(id, dev['channel'], dev['pos'])
         
         self.key_channel_pos_map = {}
-        for k in self.keys.items():
+        for _, k in self.keys.items():
             self.key_channel_pos_map[(k.channel, k.pos)] = k
 
         self.hvac_channel_map = {}
-        for hv in self.hvacs.items():
+        for _, hv in self.hvacs.items():
             self.key_channel_pos_map[hv.channel] = hv
     
     def load_status(self, status_list):
@@ -116,7 +116,7 @@ class BoardModel:
         self.hvac_channel_map[channel].set_status(value)
     
     def reset_changes(self):
-        for k in self.keys.items():
+        for _, k in self.keys.items():
             k.has_changed = False
-        for hv in self.hvacs.items():
+        for _, hv in self.hvacs.items():
             hv.has_changed = False

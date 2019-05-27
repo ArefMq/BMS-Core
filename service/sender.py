@@ -58,7 +58,7 @@ class Sender:
     def print_changes(self):
         changes = self.board_model.get_changed_keys()
         if changes:
-            for d in changes.items():
+            for _, d in changes.items():
                 if d.type == 'hvac':
                     print('%d) change hvac to %d (status=%d)' % (d.id, d.value, d.status))
                 elif d.type == 'key':

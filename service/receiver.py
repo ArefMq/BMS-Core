@@ -64,7 +64,7 @@ class Receiver:
     def apply_changes(self):
         changed_keys = self.board_model.get_changed_keys()
         if changed_keys:
-            for k in changed_keys.items():
+            for _, k in changed_keys.items():
                 if k.type == 'key':
                     self.set_key_on_db(k.id, k.status)
                 elif k.type == 'hvac':
