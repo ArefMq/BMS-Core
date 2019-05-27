@@ -2,7 +2,7 @@
 import socket
 import sqlite3
 
-from .board_model import BoardModel
+from board_model import BoardModel
 
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'

@@ -2,8 +2,8 @@
 import socket
 import sqlite3
 from time import sleep
-from .board_model import BoardModel
-from .socket_errors import error_list
+from board_model import BoardModel
+from socket_errors import error_list
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
 DEBUG = False
