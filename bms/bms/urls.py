@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    url(r'^/', views.HomePageView)
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-token-auth/', views.CustomObtainAuthToken.as_view()),
     url(r'^profile/$', views.ProfileView),
@@ -29,5 +30,4 @@ urlpatterns = [
 ]
 
 if settings.DEBUG is True:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

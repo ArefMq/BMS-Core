@@ -13,7 +13,6 @@ from bms.backend.permissions import IsAdminOrReadOnly
 from bms.backend.serializers import UserSerializer, UserProfileSerializer, ProfileUserSerializer, AccessoriesSerializer, GroupsSerializer, SceneSerializer, CommandSerializer
 from bms.backend.models import Profile, Accessories, AccessoryGroups, Scenes, Command
 from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data
-# region Token
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -24,8 +23,6 @@ class CustomObtainAuthToken(ObtainAuthToken):
         serializer = UserProfileSerializer(
             token.user, context={'request': request})
         return Response({'success': True, 'message': '', 'data': {'token': token.key, 'user': serializer.data}})
-# endregion
-# region Profile
 
 
 @api_view(['GET', 'POST'])
@@ -36,7 +33,7 @@ def ProfileView(request):
         user.profile.name = request.POST.get('name')
         user.profile.save()
         serializer = UserProfileSerializer(user, context={'request': request})
-        return Response({'success': True, 'message': 'Done!', 'data': serializer.data})
+        return Response({'success': True, 'message': '', 'data': serializer.data})
     elif request.method == 'GET':
         serializer = UserProfileSerializer(user, context={'request': request})
         return Response({'success': True, 'message': '', 'data': serializer.data})
@@ -263,3 +260,8 @@ def TrigerView(request):
         return Response({'success': True, 'message': 'Done!!', 'data': ''})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
 # endregion
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def HomePageView(request):
+    pass
