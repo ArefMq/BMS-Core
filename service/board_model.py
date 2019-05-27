@@ -1,51 +1,122 @@
 # Data Config
-NUM_OF_MODE_DATA_BYET = 1
-NUM_OF_KEY_DATA_BYET = 7
-NUM_OF_HVAC_DATA_BYET = 6
+NUM_OF_MODE_DATA_BYTE = 1
+NUM_OF_KEY_DATA_BYTES = 7
+NUM_OF_HVAC_DATA_BYTES = 6
+
+
+class Key:
+    def __init__(self, id, channel=0, pos=0, status=0):
+        self.id = id
+        self.channel = channel
+        self.pos = pos
+        self.status = status
+        self.has_changed = False
+        self.type = 'key'
+
+    def set_cmd(self, cmd):
+        if cmd != self.status:
+            self.status = cmd
+            self.has_changed = True
+
+    def toggle(self):
+        self.status = not self.status
+        self.has_changed = True
+
+
+class HVAC:
+    def __init__(self, id, channel=0, status=0, value=0):
+        # FIXME : the naming is crap, change it
+        self.id = id
+        self.channel = channel
+        self.status = status
+        self.value = value
+        self.has_changed = False
+        self.type = 'hvac'
+    
+    def set_cmd(self, cmd):
+        if cmd != self.value:
+            self.value = cmd
+            self.has_changed = True
+
+    def set_status(self, status):
+        self.status = status
+        self.has_changed = True
 
 
 class BoardModel:
-    def __init__(self):
+    def __init__(self, device_list):
         self.mode = 1
-        self.keys = [0 for _ in range(NUM_OF_KEY_DATA_BYET * 8)] # these are either 0 or 1
-        self.hvacs = [0 for _ in range(NUM_OF_HVAC_DATA_BYET)] # these are degree of celcius
-        self.previous_key_state = None
-        self.previous_hvac_state = None
-    
-    def load_from_byte_array(self, data):
-        self.previous_key_state = [i for i in self.keys]
-        self.previous_hvac_state = [i for i in self.hvacs]
+        self.keys = {}
+        self.hvacs = {}
 
-        self.keys = []
-        for i in range(NUM_OF_KEY_DATA_BYET):
-            self.keys.extend([i for i in '{0:08b}'.format(data[i])])
-        for i in range(NUM_OF_HVAC_DATA_BYET):
-            self.hvacs[i] = data[i+NUM_OF_KEY_DATA_BYET]
+        for dev in device_list:
+            id = dev['id']
+            if dev['isAnalog']:
+                self.hvacs[id] = HVAC(id, dev['channel'])
+            else:
+                self.keys[id] = Key(id, dev['channel'], dev['pos'])
+        
+        self.key_channel_pos_map = {}
+        for k in self.keys.items():
+            self.key_channel_pos_map[(k.channel, k.pos)] = k
+
+        self.hvac_channel_map = {}
+        for hv in self.hvacs.items():
+            self.key_channel_pos_map[hv.channel] = hv
     
+    def load_status(self, status_list):
+        for status in status_list:
+            id = status['id']
+            if id in self.keys:
+                self.keys[id].set_cmd(status['status'])
+            elif id in self.hvacs:
+                self.hvacs[id].set_cmd(status['analogValue'])
+    
+    @staticmethod
+    def set_bit(b, ith, value):
+        if value:
+            return b | (1 << ith)
+        else:
+            return b & ~(1 << ith)
+
     def to_byte_array(self):
         b = bytearray()
         b.append(self.mode)
+        for _ in range(NUM_OF_KEY_DATA_BYTES + NUM_OF_HVAC_DATA_BYTES):
+            b.append(0)
 
-        data_string = ''.join([str(int(bool(k))) for k in self.keys])
-        for i in range(NUM_OF_KEY_DATA_BYET):
-            try:
-                b.append(int(data_string[i*8:i*8+8], 2))
-            except ValueError:
-                b.append(0)
-        b.extend([h for h in self.hvacs])
+        for id in self.keys:
+            channel = self.keys[id].channel
+            pos = self.keys[id].pos
+            value = self.keys[id].status
+            b[channel] = self.set_bit(b[channel], pos, value)
+
+        for id in self.hvacs:
+            channel = self.hvacs[id].channel
+            b[channel] = self.hvacs[id].value
+
         return b
 
-    def update_data(self, keys=None, hvacs=None):
-        if keys:
-            self.previous_key_state = [i for i in self.keys]
-            self.keys = keys
-
-        if hvacs:
-            self.previous_hvac_state = [i for i in self.hvacs]
-            self.hvacs = hvacs
-
     def get_changed_keys(self):
-        if self.previous_key_state:
-            return [(i, self.keys[i]) for i in range(len(self.keys)) if self.keys[i] != self.previous_key_state[i]]
+        changes = {}
+        for i in self.keys:
+            if self.keys[i].has_changed:
+                changes[i] = self.keys[i]
+                self.keys[i].has_changed = False
+        for i in self.hvacs:
+            if self.hvacs[i].has_changed:
+                changes[i] = self.hvacs[i]
+                self.hvacs[i].has_changed = False
+        return changes
 
+    def set_key_by_channel_pos(self, channel_pos, value):
+        self.key_channel_pos_map[channel_pos].toggle()
 
+    def set_hvac_by_channel(self, channel, value):
+        self.hvac_channel_map[channel].set_status(value)
+    
+    def reset_changes(self):
+        for k in self.keys.items():
+            k.has_changed = False
+        for hv in self.hvacs.items():
+            hv.has_changed = False
