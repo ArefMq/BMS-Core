@@ -57,8 +57,6 @@ def UploadView(request):
         serializer = UserProfileSerializer(user, context={'request': request})
         return Response({'success': True, 'message': 'Done!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region User
 
 
 @api_view(['GET', 'POST'])
@@ -103,8 +101,6 @@ def EditUserView(request):
         serializer = UserProfileSerializer(u, context={'request': request})
         return Response({'success': True, 'message': 'Done!!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Accessories
 
 
 @api_view(['GET'])
@@ -123,7 +119,9 @@ def AllAccessoriesView(request):
 def AccessoryView(request):
     # user = request.user
     if request.method == 'GET':
-        result = get_accessory_view_data(acc_id=request.query_params.get('id'))
+        result = get_accessory_view_data(
+            acc_id=request.query_params.get('id'),
+            is_command=request.query_params.get('command', False))
         return Response(result)
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
 
@@ -140,8 +138,6 @@ def EditAccessoriesView(request):
         serializer = AccessoriesSerializer(acc)
         return Response({'success': True, 'message': 'Done!!', 'data':  {'accessories': serializer.data}})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Group
 
 
 @api_view(['POST', 'GET'])
@@ -198,8 +194,6 @@ def EditGroupView(request):
         serializer = GroupsSerializer(group)
         return Response({'success': True, 'message': 'Done!!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Command
 
 
 @api_view(['POST', 'GET'])
@@ -219,9 +213,6 @@ def CommandView(request):
     }
     set_command_view_data(**params)
     return Response({'success': True, 'message': 'Done!!', 'data': ''})
-
-# endregion
-# region scene
 
 
 @api_view(['GET'])
@@ -254,4 +245,3 @@ def TrigerView(request):
         # serializer = SceneAccessoriesSerializer(A, many=True)
         return Response({'success': True, 'message': 'Done!!', 'data': ''})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion

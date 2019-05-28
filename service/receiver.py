@@ -49,6 +49,7 @@ class Receiver:
     def get_device_status(self):
         res = self.db_connection.execute("SELECT id,status,analogValue FROM backend_accessories")
         res = [{'id': x[0], 'status': x[1], 'analogValue': x[2]} for x in res]
+        # FIXME: make digital status only boolean
         return res
 
     def destruct(self):
@@ -74,7 +75,10 @@ class Receiver:
     def process_key_channel(self, channel_id, channel_payload):
         for pos in range(8):
             val = channel_payload & (1 << pos)
-            self.board_model.set_key_by_channel_pos((channel_id, pos), val)
+            try:
+                self.board_model.set_key_by_channel_pos((channel_id, pos), val)
+            except KeyError:
+                pass
 
     def process_net_data(self):
         # process keys
@@ -83,7 +87,10 @@ class Receiver:
         
         # process hvacs
         for i in range(8, 14):
-            self.board_model.set_hvac_by_channel(i, self.network_data[i])
+            try:
+                self.board_model.set_hvac_by_channel(i, self.network_data[i])
+            except KeyError:
+                pass
 
     def cycle(self):
         status_list = self.get_device_status()
