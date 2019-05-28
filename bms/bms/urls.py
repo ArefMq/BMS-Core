@@ -1,4 +1,4 @@
-from django.conf.urls import url, include, path
+from django.conf.urls import url, include
 from rest_framework import routers
 from bms.backend import views
 from django.conf import settings
@@ -25,9 +25,9 @@ urlpatterns = [
     url(r'^sceneList/$', views.SceneListView),
     url(r'^triger/$', views.TrigerView),
 
-    path('hvacs/<int:hvac_id>/status/$', views.GetHVACStatus),
-    path('hvacs/<int:hvac_id>/targetTemperature/<int:value>/$', views.SetHVACStatus),
-    path('hvacs/<int:hvac_id>/targetHeatingCoolingState/<int:value>/$', views.SetHVACCoolingMode),
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/status/$', views.GetHVACStatus),
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetTemperature/(?P<value>[0-9]+)/$', views.SetHVACStatus),
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetHeatingCoolingState/(?P<value>[0-9]+)/$', views.SetHVACCoolingMode),
 ]
 
 if settings.DEBUG is True:
