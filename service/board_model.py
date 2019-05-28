@@ -42,11 +42,14 @@ class HVAC:
         self.type = 'hvac'
     
     def set_cmd(self, cmd):
-        if cmd != self.value:
-            self.value = cmd
-            self.has_changed = True
+        if cmd == self.value:
+            return
+        self.value = cmd
+        self.has_changed = True
 
     def set_status(self, status):
+        if self.status == status:
+            return
         self.status = status
         self.has_changed = True
 

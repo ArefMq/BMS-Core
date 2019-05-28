@@ -7,7 +7,7 @@ def set_command_view_data(acc_id, status, is_analog=False, analog_value=0):
     if is_analog:
         accessory.analogValue = analog_value
     else:
-        accessory.status = status
+        accessory.status = int(str(status).lower() == 'true' or str(status) == '1')
     accessory.save()
 
 
@@ -18,4 +18,6 @@ def get_accessory_view_data(acc_id, is_command):
         if not accessory.isAnalog:
             raise Exception('accessory id "%d" is not analog' % acc_id)
         return accessory.analogValue
-    return accessory.status
+    if accessory.analogValue:
+        return accessory.status
+    return bool(accessory.status)
