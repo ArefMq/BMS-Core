@@ -7,7 +7,7 @@ from socket_errors import error_list
 
 DB_PATH = '/home/pi/BMS-Core/bms/db.sqlite3'
 DEBUG = False
-SENDING_DELAY = 1.1
+SENDING_DELAY = 0.1 if not DEBUG else 1.2
 
 
 class Sender:
