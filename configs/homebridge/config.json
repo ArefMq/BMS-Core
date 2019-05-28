@@ -1,0 +1,50 @@
+{
+    "mdns": { "interface": "192.168.31.56" },
+    "bridge": {
+        "name": "Flow",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "031-45-154"
+    },
+
+    "description": "HomeBridge HTTP Status Control",
+
+    "accessories": [{
+            "accessory": "Http",
+            "name": "Lamp1",
+            "switchHandling": "realtime",
+            "http_method": "GET",
+            "on_url": "http://localhost/command?id=1&command=True",
+            "off_url": "http://localhost/command?id=1&command=False",
+            "status_url": "http://localhost/accessory?id=1",
+            "status_on": "true",
+            "status_off": "false",
+            "service": "Light",
+            "brightnessHandling": "no",
+            "sendimmediately": "",
+            "username": "",
+            "password": ""
+        },
+        {
+            "accessory": "Http",
+            "name": "Lamp2",
+            "switchHandling": "realtime",
+            "http_method": "GET",
+            "on_url": "http://localhost/command?id=2&command=True",
+            "off_url": "http://localhost/command?id=2&command=False",
+            "status_url": "http://localhost/accessory?id=2",
+            "status_on": "true",
+            "status_off": "false",
+            "service": "Light",
+            "brightnessHandling": "no",
+            "sendimmediately": "",
+            "username": "",
+            "password": ""
+        },  
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat",
+            "apiroute": "http://localhost/hvacs/17"
+        }
+    ]
+}
