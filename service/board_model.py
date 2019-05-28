@@ -12,15 +12,23 @@ class Key:
         self.status = status
         self.has_changed = False
         self.type = 'key'
+        self.toggle_command = None
 
     def set_cmd(self, cmd):
         if cmd != self.status:
             self.status = cmd
             self.has_changed = True
 
-    def toggle(self):
+    def toggle(self, value):
+        if self.toggle_command is None:
+            self.toggle_command = value
+
+        if self.toggle_command == value:
+            return
+
         self.status = not self.status
         self.has_changed = True
+        self.toggle_command = value
 
 
 class HVAC:
@@ -110,7 +118,7 @@ class BoardModel:
         return changes
 
     def set_key_by_channel_pos(self, channel_pos, value):
-        self.key_channel_pos_map[channel_pos].toggle()
+        self.key_channel_pos_map[channel_pos].toggle(value)
 
     def set_hvac_by_channel(self, channel, value):
         self.hvac_channel_map[channel].set_status(value)
