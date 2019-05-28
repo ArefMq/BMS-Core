@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from bms.backend.serializers import UserSerializer, UserProfileSerializer, ProfileUserSerializer, AccessoriesSerializer, GroupsSerializer, SceneSerializer, CommandSerializer
 from bms.backend.models import Profile, Accessories, AccessoryGroups, Scenes, Command
-from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data
+from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data, get_hvac_detailed_status, set_hvac_detailed_status, set_hvac_cooling_state
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -245,3 +245,24 @@ def TrigerView(request):
         # serializer = SceneAccessoriesSerializer(A, many=True)
         return Response({'success': True, 'message': 'Done!!', 'data': ''})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def GetHVACStatus(request, hvac_id):
+    user = request.user
+    return Response(get_hvac_detailed_status(hvac_id))
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def SetHVACStatus(request, hvac_id, value):
+    user = request.user
+    return Response(set_hvac_detailed_status(hvac_id, value))
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def SetHVACCoolingMode(request, hvac_id, value):
+    user = request.user
+    return Response(set_hvac_cooling_state(hvac_id, value))
