@@ -18,6 +18,6 @@ def get_accessory_view_data(acc_id, is_command):
         if not accessory.isAnalog:
             raise Exception('accessory id "%d" is not analog' % acc_id)
         return accessory.analogValue
-    if accessory.analogValue:
+    if accessory.isAnalog:
         return accessory.status
     return bool(accessory.status)
