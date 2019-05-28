@@ -73,7 +73,7 @@ class BoardModel:
 
         self.hvac_channel_map = {}
         for _, hv in self.hvacs.items():
-            self.key_channel_pos_map[hv.channel] = hv
+            self.hvac_channel_map[hv.channel] = hv
     
     def load_status(self, status_list):
         for status in status_list:
