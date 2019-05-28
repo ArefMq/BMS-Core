@@ -14,8 +14,5 @@ def set_command_view_data(acc_id, status, is_analog=False, analog_value=0):
 def get_accessory_view_data(acc_id):
     accessory = Accessories.objects.get(id=acc_id)
     serializer = AccessoriesSerializer(accessory)
-    
-    if accessory.isAnalog:
-        return accessory.analogValue
-    else:    
-        return accessory.status
+    return accessory.status
+
