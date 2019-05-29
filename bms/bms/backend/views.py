@@ -1,17 +1,13 @@
-from django.http import HttpResponse, JsonResponse
-from rest_framework import viewsets, permissions, status
+from django.contrib.auth.models import User
+
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from bms.backend.permissions import IsAdminOrReadOnly
-from django.contrib.auth.models import User
+
 from bms.backend.serializers import UserSerializer, UserProfileSerializer, ProfileUserSerializer, AccessoriesSerializer, GroupsSerializer, SceneSerializer, CommandSerializer
 from bms.backend.models import Profile, Accessories, AccessoryGroups, Scenes, Command
-
-# region Token
+from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data, get_hvac_detailed_status, set_hvac_detailed_status, set_hvac_cooling_state
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -22,8 +18,6 @@ class CustomObtainAuthToken(ObtainAuthToken):
         serializer = UserProfileSerializer(
             token.user, context={'request': request})
         return Response({'success': True, 'message': '', 'data': {'token': token.key, 'user': serializer.data}})
-# endregion
-# region Profile
 
 
 @api_view(['GET', 'POST'])
@@ -34,7 +28,7 @@ def ProfileView(request):
         user.profile.name = request.POST.get('name')
         user.profile.save()
         serializer = UserProfileSerializer(user, context={'request': request})
-        return Response({'success': True, 'message': 'Done!', 'data': serializer.data})
+        return Response({'success': True, 'message': '', 'data': serializer.data})
     elif request.method == 'GET':
         serializer = UserProfileSerializer(user, context={'request': request})
         return Response({'success': True, 'message': '', 'data': serializer.data})
@@ -63,8 +57,6 @@ def UploadView(request):
         serializer = UserProfileSerializer(user, context={'request': request})
         return Response({'success': True, 'message': 'Done!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region User
 
 
 @api_view(['GET', 'POST'])
@@ -109,8 +101,6 @@ def EditUserView(request):
         serializer = UserProfileSerializer(u, context={'request': request})
         return Response({'success': True, 'message': 'Done!!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Accessories
 
 
 @api_view(['GET'])
@@ -125,13 +115,14 @@ def AllAccessoriesView(request):
 
 
 @api_view(['GET'])
-# @permission_classes([permissions.IsAuthenticated])
+# @permission_classes([permissions.IsAuthenticated]) This should be remain commentted
 def AccessoryView(request):
     # user = request.user
     if request.method == 'GET':
-        acc = Accessories.objects.get(id=request.query_params.get('id'))
-        serializer = AccessoriesSerializer(acc)
-        return Response(acc.status)
+        result = get_accessory_view_data(
+            acc_id=request.query_params.get('id'),
+            is_command=request.query_params.get('command', False))
+        return Response(result)
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
 
 
@@ -147,8 +138,6 @@ def EditAccessoriesView(request):
         serializer = AccessoriesSerializer(acc)
         return Response({'success': True, 'message': 'Done!!', 'data':  {'accessories': serializer.data}})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Group
 
 
 @api_view(['POST', 'GET'])
@@ -205,8 +194,6 @@ def EditGroupView(request):
         serializer = GroupsSerializer(group)
         return Response({'success': True, 'message': 'Done!!', 'data': serializer.data})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
-# region Command
 
 
 @api_view(['POST', 'GET'])
@@ -214,19 +201,18 @@ def EditGroupView(request):
 def CommandView(request):
     user = request.user
     if request.method == 'POST':
-        acc = Accessories.objects.get(id=request.POST.get('id'))
-        acc.status = request.POST.get('command')
-        acc.save()
-        return Response({'success': True, 'message': 'Done!!', 'data': ''})
+        request_data = request.POST
     elif request.method == 'GET':
-        acc = Accessories.objects.get(id=request.query_params.get('id'))
-        acc.status = request.query_params.get('command')
-        acc.save()
-        return Response({'success': True, 'message': 'Done!!', 'data': ''})
-    return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
+        request_data = request.query_params
 
-# endregion
-# region scene
+    params = {
+        'acc_id': request_data.get('id'),
+        'status': request_data.get('command', 0),
+        'is_analog': request_data.get('is_analog', False),
+        'analog_value': request_data.get('analog_value', 0),
+    }
+    set_command_view_data(**params)
+    return Response({'success': True, 'message': 'Done!!', 'data': ''})
 
 
 @api_view(['GET'])
@@ -259,4 +245,24 @@ def TrigerView(request):
         # serializer = SceneAccessoriesSerializer(A, many=True)
         return Response({'success': True, 'message': 'Done!!', 'data': ''})
     return Response({'success': False, 'message': 'Something is wrong!!', 'data': ''})
-# endregion
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def GetHVACStatus(request, hvac_id):
+    user = request.user
+    return Response(get_hvac_detailed_status(hvac_id))
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def SetHVACStatus(request, hvac_id, value):
+    user = request.user
+    return Response(set_hvac_detailed_status(hvac_id, value))
+
+
+@api_view(['GET'])
+#@permission_classes([permissions.IsAuthenticated])
+def SetHVACCoolingMode(request, hvac_id, value):
+    user = request.user
+    return Response(set_hvac_cooling_state(hvac_id, value))

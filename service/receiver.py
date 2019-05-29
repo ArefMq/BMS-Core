@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import socket
-import sys
-import array
 import sqlite3
 
 from board_model import BoardModel
@@ -15,7 +13,7 @@ class Receiver:
     def __init__(self, host='', port=2222):
         self.host = host    # Symbolic name meaning all available interfaces
         self.port = port    # Arbitrary non-privileged port
-        self.board_model = BoardModel()
+        self.network_data = None
 
         # Datagram (udp) socket
         try :
@@ -40,36 +38,75 @@ class Receiver:
         except Exception as exp:
             print('Failed to connect to the database. Because: %s', str(exp))
             raise
+        
+        self.board_model = BoardModel(self.get_all_device_list())
 
-    
+    def get_all_device_list(self):
+        res = self.db_connection.execute("SELECT id,channel,pos,isAnalog FROM backend_accessories")
+        res = [{'id': x[0], 'channel': x[1], 'pos': x[2], 'isAnalog': x[3]} for x in res]
+        return res
+
+    def get_device_status(self):
+        res = self.db_connection.execute("SELECT id,status,analogValue FROM backend_accessories")
+        res = [{'id': x[0], 'status': x[1], 'analogValue': x[2]} for x in res]
+        # FIXME: make digital status only boolean
+        return res
+
     def destruct(self):
         self.socket.close()
         self.db_connection.close()
 
-    def cycle(self):
+    def update_data_from_network(self):
         data, addr = self.socket.recvfrom(1024)
-
         if not data: 
             raise Exception('invalid data recieved.')
-        
-        data = bytearray(data.strip())
-        self.board_model.load_from_byte_array(data)
+        self.network_data = bytearray(data.strip())
 
-        rows = self.db_connection.execute('SELECT id,channel,pos,status FROM backend_accessories')
-        db_state = [row[3] for row in rows]
-
+    def apply_changes(self):
         changed_keys = self.board_model.get_changed_keys()
         if changed_keys:
-            for key_id, _ in changed_keys:
-                if key_id >= len(db_state):
-                    break
-                self.set_key_on_db(key_id, 1 - db_state[key_id])
+            for _, k in changed_keys.items():
+                if k.type == 'key':
+                    self.set_key_on_db(k.id, k.status)
+                elif k.type == 'hvac':
+                    self.set_hvac_on_db(k.id, k.status)
             self.db_connection.commit()
+
+    def process_key_channel(self, channel_id, channel_payload):
+        for pos in range(8):
+            val = channel_payload & (1 << pos)
+            try:
+                self.board_model.set_key_by_channel_pos((channel_id, pos), val)
+            except KeyError:
+                pass
+
+    def process_net_data(self):
+        # process keys
+        for i in range(1, 8):
+            self.process_key_channel(i, self.network_data[i])
         
+        # process hvacs
+        for i in range(8, 14):
+            try:
+                self.board_model.set_hvac_by_channel(i, self.network_data[i])
+            except KeyError:
+                pass
+
+    def cycle(self):
+        status_list = self.get_device_status()
+        self.board_model.load_status(status_list)
+        self.board_model.reset_changes()
+
+        self.update_data_from_network()
+        self.process_net_data()
+        self.apply_changes()
     
-    def set_key_on_db(self, ith, value):
-        print('toggeling %d to %d' % (ith, value))
-        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % (value, ith + 1))
+    def set_key_on_db(self, id, value):
+        print('toggeling %d to %d' % (id, value))
+        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % (value, id))
+
+    def set_hvac_on_db(self, id, value):
+        self.db_connection.execute('UPDATE backend_accessories SET status=%d WHERE id=%d' % (value, id))
 
 
 if __name__ == "__main__":

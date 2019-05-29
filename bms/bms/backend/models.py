@@ -35,10 +35,13 @@ class Accessories(models.Model):
     name = models.TextField()
     channel = models.IntegerField()
     pos = models.IntegerField()
-    status = models.BooleanField(default=False)
+    status = models.IntegerField(default=0)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
     iconName = models.TextField()
     AccType = models.IntegerField()
+    
+    isAnalog = models.BooleanField(default=False)
+    analogValue = models.IntegerField()
 
     class Meta:
         ordering = ('id',)
@@ -69,3 +72,4 @@ class Command(models.Model):
     accessory = models.ForeignKey(Accessories, on_delete=models.CASCADE)
     scene = models.ForeignKey(
         Scenes, related_name='commands', on_delete=models.CASCADE)
+

@@ -61,7 +61,7 @@ class ProfileUserSerializer(serializers.ModelSerializer):
 class AccessoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Accessories
-        fields = ('id', 'name', 'status', 'iconName', 'AccType')
+        fields = ('id', 'name', 'status', 'iconName', 'AccType', 'isAnalog', 'analogValue')
 
 
 class GroupsSerializer(serializers.ModelSerializer):

@@ -5,8 +5,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-token-auth/', views.CustomObtainAuthToken.as_view()),
@@ -26,8 +24,11 @@ urlpatterns = [
     url(r'^command/$', views.CommandView),
     url(r'^sceneList/$', views.SceneListView),
     url(r'^triger/$', views.TrigerView),
+
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/status/$', views.GetHVACStatus),
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetTemperature/(?P<value>[0-9]+)/$', views.SetHVACStatus),
+    url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetHeatingCoolingState/(?P<value>[0-9]+)/$', views.SetHVACCoolingMode),
 ]
 
 if settings.DEBUG is True:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
