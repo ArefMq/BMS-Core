@@ -1,6 +1,7 @@
 # BMS-Core
--------------------------------------
+
 BMS Controller project
+-------------------------------------
 
 ## setup
 In order to setup the project follow the steps below:
