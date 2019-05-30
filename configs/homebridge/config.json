@@ -1,50 +1,261 @@
 {
-    "mdns": { "interface": "192.168.31.56" },
+    "mdns": { "interface": "192.168.1.12" },
     "bridge": {
         "name": "Flow",
         "username": "CC:22:3D:E3:CE:30",
         "port": 51826,
-        "pin": "031-45-154"
+        "pin": "031-45-154",
+        "forceRefreshDelay": 800
     },
-
+    
     "description": "HomeBridge HTTP Status Control",
-
-    "accessories": [{
-            "accessory": "Http",
-            "name": "Lamp1",
-            "switchHandling": "realtime",
-            "http_method": "GET",
-            "on_url": "http://localhost/command?id=1&command=True",
-            "off_url": "http://localhost/command?id=1&command=False",
-            "status_url": "http://localhost/accessory?id=1",
-            "status_on": "true",
-            "status_off": "false",
-            "service": "Light",
-            "brightnessHandling": "no",
-            "sendimmediately": "",
-            "username": "",
-            "password": ""
+    
+    "accessories": [
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 1",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=1&command=True",
+            "offUrl": "http://localhost/command?id=1&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=1"
         },
         {
-            "accessory": "Http",
-            "name": "Lamp2",
-            "switchHandling": "realtime",
-            "http_method": "GET",
-            "on_url": "http://localhost/command?id=2&command=True",
-            "off_url": "http://localhost/command?id=2&command=False",
-            "status_url": "http://localhost/accessory?id=2",
-            "status_on": "true",
-            "status_off": "false",
-            "service": "Light",
-            "brightnessHandling": "no",
-            "sendimmediately": "",
-            "username": "",
-            "password": ""
-        },  
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 2",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=2&command=True",
+            "offUrl": "http://localhost/command?id=2&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=2"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 3",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=3&command=True",
+            "offUrl": "http://localhost/command?id=3&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=3"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 4",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=4&command=True",
+            "offUrl": "http://localhost/command?id=4&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=4"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 5",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=5&command=True",
+            "offUrl": "http://localhost/command?id=5&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=5"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 6",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=6&command=True",
+            "offUrl": "http://localhost/command?id=6&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=6"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 7",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=7&command=True",
+            "offUrl": "http://localhost/command?id=7&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=7"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 8",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=8&command=True",
+            "offUrl": "http://localhost/command?id=8&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=8"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 9",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=9&command=True",
+            "offUrl": "http://localhost/command?id=9&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=9"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 10",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=10&command=True",
+            "offUrl": "http://localhost/command?id=10&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=10"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 11",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=11&command=True",
+            "offUrl": "http://localhost/command?id=11&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=11"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 12",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=12&command=True",
+            "offUrl": "http://localhost/command?id=12&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=12"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 13",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=13&command=True",
+            "offUrl": "http://localhost/command?id=13&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=13"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 14",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=14&command=True",
+            "offUrl": "http://localhost/command?id=14&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=14"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 15",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=15&command=True",
+            "offUrl": "http://localhost/command?id=15&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=15"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 16",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=16&command=True",
+            "offUrl": "http://localhost/command?id=16&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=16"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 17",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=17&command=True",
+            "offUrl": "http://localhost/command?id=17&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=17"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 18",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=18&command=True",
+            "offUrl": "http://localhost/command?id=18&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=18"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 19",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=19&command=True",
+            "offUrl": "http://localhost/command?id=19&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=19"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 20",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=20&command=True",
+            "offUrl": "http://localhost/command?id=20&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=20"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 21",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=21&command=True",
+            "offUrl": "http://localhost/command?id=21&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=21"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 22",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=22&command=True",
+            "offUrl": "http://localhost/command?id=22&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=22"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 23",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=23&command=True",
+            "offUrl": "http://localhost/command?id=23&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=23"
+        },
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Lamp 24",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/command?id=24&command=True",
+            "offUrl": "http://localhost/command?id=24&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=24"
+        },
         {
             "accessory": "Thermostat",
-            "name": "Thermostat",
-            "apiroute": "http://localhost/hvacs/17"
+            "name": "Thermostat1",
+            "apiroute": "http://localhost/hvacs/25"
+        },
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat2",
+            "apiroute": "http://localhost/hvacs/26"
+        },
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat3",
+            "apiroute": "http://localhost/hvacs/27"
+        },
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat4",
+            "apiroute": "http://localhost/hvacs/28"
+        },
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat5",
+            "apiroute": "http://localhost/hvacs/29"
+        },
+        {
+            "accessory": "Thermostat",
+            "name": "Thermostat6",
+            "apiroute": "http://localhost/hvacs/30"
         }
     ]
 }
