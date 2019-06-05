@@ -8,7 +8,7 @@ def kill_all_process():
 
     for line in out.splitlines():
         line = str(line)
-        if 'receiver.py' in line or 'manage.py' in line or 'sender.py' in line:
+        if 'receiver.py' in line or 'manage.py' in line or 'sender.py' in line or 'homebridge' in line:
             pid = int(line.split()[1])
             os.kill(pid, signal.SIGKILL)
 
