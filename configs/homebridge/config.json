@@ -1,10 +1,9 @@
-{
-    "mdns": { "interface": "192.168.1.12" },
+{  
     "bridge": {
-        "name": "Flow",
-        "username": "CC:22:3D:E3:CE:30",
+        "name": "Aavestan",
+        "username": "CC:22:3D:E3:CE:32",
         "port": 51826,
-        "pin": "031-45-154",
+        "pin": "032-45-153",
         "forceRefreshDelay": 800
     },
     
