@@ -20,6 +20,7 @@ if __name__ == "__main__":
         if res != 'Already up to date.':
             print('updated:   :D\n%s' % res)
             kill_all_process()
+            subprocess.call(['/home/pi/BMS-Core/after_update'])
             subprocess.call(['/home/pi/BMS-Core/watch'])
     except GitCommandError as exp:
         print('pull exception. because: %s' % exp)

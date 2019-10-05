@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "After update script ran."
