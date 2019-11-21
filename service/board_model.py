@@ -54,15 +54,42 @@ class HVAC:
         self.has_changed = True
 
 
+class HVACMode:
+    def __init__(self, id, status=1, value=1):
+        # FIXME : the naming is crap, change it
+        self.id = id
+        self.status = status
+        self.value = value
+        self.has_changed = False
+        self.type = 'hvac_mode'
+
+    def set_cmd(self, cmd):
+        if cmd == self.value:
+            return
+        self.value = cmd
+        self.has_changed = True
+
+    def set_status(self, status):
+        if self.status == status:
+            return
+        self.status = status
+        self.has_changed = True
+
+
 class BoardModel:
     def __init__(self, device_list):
-        self.mode = 1
+        self.mode = None
         self.keys = {}
         self.hvacs = {}
 
         for dev in device_list:
             id = dev['id']
-            if dev['isAnalog']:
+            if dev['channel'] == 0:
+                if self.mode is None:
+                    self.mode = HVACMode(id)
+                else:
+                    raise Exception('Multiple HVAC mode found...')
+            elif dev['isAnalog']:
                 self.hvacs[id] = HVAC(id, dev['channel'])
             else:
                 self.keys[id] = Key(id, dev['channel'], dev['pos'])
@@ -82,7 +109,9 @@ class BoardModel:
                 self.keys[id].set_cmd(status['status'])
             elif id in self.hvacs:
                 self.hvacs[id].set_cmd(status['analogValue'])
-    
+            elif id == self.mode.id:
+                self.mode.set_cmd(status['analogValue'])
+
     @staticmethod
     def set_bit(b, ith, value):
         if value:
@@ -92,7 +121,8 @@ class BoardModel:
 
     def to_byte_array(self):
         b = bytearray()
-        b.append(self.mode)
+        b.append(self.mode.value)
+
         for _ in range(NUM_OF_KEY_DATA_BYTES + NUM_OF_HVAC_DATA_BYTES):
             b.append(0)
 
@@ -110,6 +140,9 @@ class BoardModel:
 
     def get_changed_keys(self):
         changes = {}
+        if self.mode.has_changed:
+            changes[self.mode.id] = self.mode
+            self.mode.has_changed = False
         for i in self.keys:
             if self.keys[i].has_changed:
                 changes[i] = self.keys[i]
@@ -125,9 +158,14 @@ class BoardModel:
 
     def set_hvac_by_channel(self, channel, value):
         self.hvac_channel_map[channel].set_status(value)
-    
+
+    def set_hvac_mode(self, value):
+        self.mode.set_status(value)
+
     def reset_changes(self):
         for _, k in self.keys.items():
             k.has_changed = False
         for _, hv in self.hvacs.items():
             hv.has_changed = False
+
+        self.mode.has_changed = False
