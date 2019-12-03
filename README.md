@@ -7,7 +7,13 @@ BMS Controller project
 ## setup
 In order to setup the project follow the steps below:
 
-First clone the repository via:
+First install the pre-requirements
+```bash
+sudo apt update
+sudo apt install -y buils-essential git python3-pip openssh-server
+```
+
+Then clone the repository via:
 ```bash
 # It is important to run this part at the home directory
 cd ~
