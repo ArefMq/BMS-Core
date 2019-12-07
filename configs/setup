@@ -16,6 +16,7 @@ sudo apt install -y nodejs npm libavahi-compat-libdnssd-dev
 sudo npm install -g homebridge
 sudo npm install -g homebridge-http-switch
 sudo npm install -g homebridge-thermostat
+cp homebridge_config.json ~/.homebridge/config.json
 
 # Setup the rest
 crontab crontab_file
