@@ -11,7 +11,7 @@ SENDING_DELAY = 0.1 if not DEBUG else 1.2
 
 
 class Sender:
-    def __init__(self, host='192.168.1.1', port=2223):
+    def __init__(self, host='192.168.1.90', port=2223):
         self.HOST = host # Symbolic name meaning all available interfaces
         self.PORT = port # Arbitrary non-privileged port
 
