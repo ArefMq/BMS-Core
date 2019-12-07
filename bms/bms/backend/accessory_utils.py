@@ -44,4 +44,7 @@ def set_hvac_detailed_status(acc_id, value):
 
 
 def set_hvac_cooling_state(acc_id, value):
-    pass
+    accessory = Accessories.objects.get(id=acc_id)
+    accessory.analogValue = value
+    accessory.save()
+    return {'success': True, 'message': '', 'data': ''}
