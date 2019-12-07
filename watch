@@ -9,9 +9,9 @@ res_sender=`ps aux | grep "[s]ender" | wc -l`
 res_reciever=`ps aux | grep "[r]eciever" | wc -l`
 res_homebridge=`ps aux | grep "[h]omebridge" | wc -l`
 
-cmd_django="sudo python3 /home/pi/BMS-Core/bms/manage.py runserver 0.0.0.0:80 > /dev/null"
+cmd_django="sudo python3 /home/pi/BMS-Core/bms/manage.py runserver 0.0.0.0:80"
 cmd_sender="sudo python /home/pi/BMS-Core/service/sender.py > /dev/null"
-cmd_reciever="sudo python /home/pi/BMS-Core/service/receive.py > /dev/null"
+cmd_reciever="sudo python /home/pi/BMS-Core/service/receiver.py > /dev/null"
 cmd_homebridge="homebridge > /dev/null"
 
 if [ "$res_django" -eq "0" ]; then
