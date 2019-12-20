@@ -47,8 +47,8 @@ class Receiver:
         return res
 
     def get_device_status(self):
-        res = self.db_connection.execute("SELECT id,status,analogValue FROM backend_accessories")
-        res = [{'id': x[0], 'status': x[1], 'analogValue': x[2]} for x in res]
+        res = self.db_connection.execute("SELECT id,status,analogValue,isActive FROM backend_accessories")
+        res = [{'id': x[0], 'status': x[1], 'analogValue': x[2], 'isActive': x[3]} for x in res]
         # FIXME: make digital status only boolean
         return res
 

@@ -39,12 +39,14 @@ class HVAC:
         self.status = status
         self.value = value
         self.has_changed = False
+        self.isActive = True
         self.type = 'hvac'
     
-    def set_cmd(self, cmd):
-        if cmd == self.value:
+    def set_cmd(self, cmd, is_active):
+        if cmd == self.value and is_active == self.isActive:
             return
         self.value = cmd
+        self.isActive = is_active
         self.has_changed = True
 
     def set_status(self, status):
@@ -59,15 +61,8 @@ class HVACMode:
         # FIXME : the naming is crap, change it
         self.id = id
         self.status = status
-        self.value = value
         self.has_changed = False
         self.type = 'hvac_mode'
-
-    def set_cmd(self, cmd):
-        if cmd == self.value:
-            return
-        self.value = cmd
-        self.has_changed = True
 
     def set_status(self, status):
         if self.status == status:
@@ -108,9 +103,9 @@ class BoardModel:
             if id in self.keys:
                 self.keys[id].set_cmd(status['status'])
             elif id in self.hvacs:
-                self.hvacs[id].set_cmd(status['analogValue'])
+                self.hvacs[id].set_cmd(status['analogValue'], status['isActive'])
             elif id == self.mode.id:
-                self.mode.set_cmd(status['analogValue'])
+                self.mode.set_status(status['status'])
 
     @staticmethod
     def set_bit(b, ith, value):
@@ -121,7 +116,13 @@ class BoardModel:
 
     def to_byte_array(self):
         b = bytearray()
-        b.append(self.mode.value)
+        mode = self.mode.status+1
+        i = 0
+        for _, h in self.hvacs.items():
+            mode |= h.isActive << (i+2)
+            i += 1
+
+        b.append(mode)
 
         for _ in range(NUM_OF_KEY_DATA_BYTES + NUM_OF_HVAC_DATA_BYTES):
             b.append(0)

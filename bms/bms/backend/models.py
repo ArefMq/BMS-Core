@@ -42,6 +42,7 @@ class Accessories(models.Model):
     
     isAnalog = models.BooleanField(default=False)
     analogValue = models.IntegerField()
+    isActive = models.IntegerField(default=1)
 
     class Meta:
         ordering = ('id',)

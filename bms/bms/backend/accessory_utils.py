@@ -24,13 +24,11 @@ def get_accessory_view_data(acc_id, is_command):
 
 
 def get_hvac_detailed_status(acc_id):
-    TEMP_COOLING_STATE_MODE = 2
     accessory = Accessories.objects.get(id=acc_id)
-
     result = {
-        "targetHeatingCoolingState": TEMP_COOLING_STATE_MODE,
+        "targetHeatingCoolingState": 3 if accessory.isActive > 0 else 0,
         "targetTemperature": accessory.analogValue,
-        "currentHeatingCoolingState": TEMP_COOLING_STATE_MODE,
+        "currentHeatingCoolingState":  3 if accessory.isActive > 0 else 0,
         "currentTemperature": accessory.status
     }
     return result
@@ -45,6 +43,13 @@ def set_hvac_detailed_status(acc_id, value):
 
 def set_hvac_cooling_state(acc_id, value):
     accessory = Accessories.objects.get(id=acc_id)
-    accessory.analogValue = value + 1
+    accessory.isActive = 1 if int(value) > 0 else 0
+    accessory.save()
+    return {'success': True, 'message': '', 'data': ''}
+
+
+def set_all_hvac_cooling_state(acc_id, value):
+    accessory = Accessories.objects.get(id=acc_id)
+    accessory.status = int(str(value).lower() == 'true' or str(value) == '1')
     accessory.save()
     return {'success': True, 'message': '', 'data': ''}

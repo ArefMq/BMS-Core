@@ -46,13 +46,13 @@ class Sender:
         self.db_connection.close()
     
     def get_all_device_list(self):
-        res = self.db_connection.execute("SELECT id,channel,pos,isAnalog FROM backend_accessories")
-        res = [{'id': x[0], 'channel': x[1], 'pos': x[2], 'isAnalog': x[3]} for x in res]
+        res = self.db_connection.execute("SELECT id,channel,pos,isAnalog,isActive FROM backend_accessories")
+        res = [{'id': x[0], 'channel': x[1], 'pos': x[2], 'isAnalog': x[3], 'isActive': x[4]} for x in res]
         return res
     
     def get_device_status(self):
-        res = self.db_connection.execute("SELECT id,status,analogValue FROM backend_accessories")
-        res = [{'id': x[0], 'status': x[1], 'analogValue': x[2]} for x in res]
+        res = self.db_connection.execute("SELECT id,status,analogValue,isActive FROM backend_accessories")
+        res = [{'id': x[0], 'status': x[1], 'analogValue': x[2], 'isActive': x[3]} for x in res]
         return res
         
     def print_changes(self):
@@ -60,7 +60,7 @@ class Sender:
         if changes:
             for _, d in changes.items():
                 if d.type == 'hvac':
-                    print('%d) change hvac to %d (status=%d)' % (d.id, d.value, d.status))
+                    print('%d) change hvac to %d (status=%d, active=%d)' % (d.id, d.value, d.status, d.isActive))
                 elif d.type == 'key':
                     print('%d) change key to %d' % (d.id, d.status))
 

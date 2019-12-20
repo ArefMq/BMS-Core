@@ -1,4 +1,4 @@
-{  
+{
     "bridge": {
         "name": "Aavestan",
         "username": "CC:22:3D:E3:CE:32",
@@ -6,9 +6,9 @@
         "pin": "032-45-153",
         "forceRefreshDelay": 800
     },
-    
+
     "description": "HomeBridge HTTP Status Control",
-    
+
     "accessories": [
         {
             "accessory": "HTTP-SWITCH",
@@ -226,6 +226,18 @@
             "statusPattern": "true",
             "statusUrl": "http://localhost/accessory?id=24"
         },
+
+        {
+            "accessory": "HTTP-SWITCH",
+            "name": "Heating / Cooling",
+            "switchType": "stateful",
+            "onUrl": "http://localhost/hvacsMode?id=31&command=True",
+            "offUrl": "http://localhost/hvacsMode?id=31&command=False",
+            "statusPattern": "true",
+            "statusUrl": "http://localhost/accessory?id=31"
+        },
+
+
         {
             "accessory": "Thermostat",
             "name": "Thermostat1",

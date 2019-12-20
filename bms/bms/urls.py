@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^sceneList/$', views.SceneListView),
     url(r'^triger/$', views.TrigerView),
 
+    url(r'^hvacsMode/$', views.SetHVACCoolingModeAll),
     url(r'^hvacs/(?P<hvac_id>[0-9]+)/status/$', views.GetHVACStatus),
     url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetTemperature/(?P<value>[0-9]+)/$', views.SetHVACStatus),
     url(r'^hvacs/(?P<hvac_id>[0-9]+)/targetHeatingCoolingState/(?P<value>[0-9]+)/$', views.SetHVACCoolingMode),

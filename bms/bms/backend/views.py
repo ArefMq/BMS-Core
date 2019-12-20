@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from bms.backend.serializers import UserSerializer, UserProfileSerializer, ProfileUserSerializer, AccessoriesSerializer, GroupsSerializer, SceneSerializer, CommandSerializer
 from bms.backend.models import Profile, Accessories, AccessoryGroups, Scenes, Command
-from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data, get_hvac_detailed_status, set_hvac_detailed_status, set_hvac_cooling_state
+from bms.backend.accessory_utils import set_command_view_data, get_accessory_view_data, get_hvac_detailed_status, set_hvac_detailed_status, set_hvac_cooling_state, set_all_hvac_cooling_state
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -266,3 +266,15 @@ def SetHVACStatus(request, hvac_id, value):
 def SetHVACCoolingMode(request, hvac_id, value):
     user = request.user
     return Response(set_hvac_cooling_state(hvac_id, value))
+
+
+@api_view(['GET', 'POST'])
+#@permission_classes([permissions.IsAuthenticated])
+def SetHVACCoolingModeAll(request):
+    user = request.user
+    if request.method == 'POST':
+        request_data = request.POST
+    elif request.method == 'GET':
+        request_data = request.query_params
+
+    return Response(set_all_hvac_cooling_state(request_data.get('id'), request_data.get('command', 1)))
